@@ -92,7 +92,7 @@ export CXX="$(which g++)"
 export MPICC="$(which mpicc)"
 export MPICXX="$(which mpicxx)"
 
-./configure --prefix=%{INSTALL_DIR} --enable-shared=yes CFLAGS='-fPIC' --enable-mpi --enable-openmp --enable-threads CFLAGS=-march=native CPPFLAGS=-march=native
+./configure --prefix=%{INSTALL_DIR} --enable-shared=yes CFLAGS='-fPIC' --enable-float --enable-mpi --enable-openmp --enable-threads CFLAGS=-march=native CPPFLAGS=-march=native
 make -j8
 make install
 
