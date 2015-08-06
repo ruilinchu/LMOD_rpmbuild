@@ -76,6 +76,8 @@ module purge
 module load gcc/4.8.2
 module load openmpi/1.8.4
 module load boost/1.57.0
+sed -i 's+boost::thread::hardware_concurrency()+1+g' apps/*
+sed -i 's+num_tasks(8)+num_tasks(1)+g' src/parallel_mc.h
 
 ./configure --with-boost=$HMS_BOOST_DIR --with-mpi=$HMS_OPENMPI_DIR --prefix=%{INSTALL_DIR}
 make
@@ -116,7 +118,7 @@ prepend_path( "LD_LIBRARY_PATH", "%{INSTALL_DIR}/lib")
 EOF
 
 %files 
-%defattr(-,rc200,rccg,-)
+%defattr(775,rc200,rccg,775)
 %{INSTALL_DIR}
 %{MODULE_DIR}
 

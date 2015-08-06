@@ -1,20 +1,19 @@
 #
-# Openmpi_gc48 spec file
+# python spec file
 #
-Summary:   Openmpi_gcc48 install
-Name:      openmpi
-Version:   1.8.4
+Summary:   python install
+Name:      python
+Version:   2.7.6
 Release:   0
 License:   GNU General Public License
-Vendor:    http://www.open-mpi.org
-Group:     system/hpc/mpi
-Source:    openmpi-1.8.4.tar.gz
+Vendor:    http://www.python.org/
+Group:     statistics/graphics
+Source:    Python-2.7.6.tgz
 Packager:  HMS- jimi_chu@hms.harvard.edu
 AutoReqProv: no
 
 %description
-The Open MPI Project is an open source Message Passing Interface implementation that is
-developed and maintained by a consortium of academic, research, and industry partners. 
+Python is a widely used general-purpose, high-level programming language.
 
 %define debug_package %{nil}
 
@@ -42,6 +41,7 @@ developed and maintained by a consortium of academic, research, and industry par
     %define INSTALL_DIR %{PKG_BASE}/%{version}
     %define MODULE_DIR  %{APPS}/%{MODULES}/Core/%{name}
     %define set_tree 1
+    %define _rpmfilename %%{ARCH}/%%{NAME}.%%{VERSION}.%%{RELEASE}.%%{ARCH}.rpm
 %endif
 
 %if "%{dep_comp}" == "1"
@@ -49,6 +49,7 @@ developed and maintained by a consortium of academic, research, and industry par
     %define INSTALL_DIR %{PKG_BASE}/%{version}                    
     %define MODULE_DIR  %{APPS}/%{MODULES}/Compiler/%{comp_fam}/%{comp_ver}/%{name}
     %define set_tree 1
+    %define _rpmfilename %%{ARCH}/%%{NAME}.%%{VERSION}.%%{RELEASE}.%{comp_fam_ver}.%%{ARCH}.rpm
 %endif
 
 %if "%{dep_mpi}" == "1"
@@ -56,6 +57,7 @@ developed and maintained by a consortium of academic, research, and industry par
     %define INSTALL_DIR %{PKG_BASE}/%{version}
     %define MODULE_DIR  %{APPS}/%{MODULES}/MPI/%{comp_fam}/%{comp_ver}/%{mpi_fam}/%{mpi_ver}/%{name}
     %define set_tree 1
+    %define _rpmfilename %%{ARCH}/%%{NAME}.%%{VERSION}.%%{RELEASE}.%{comp_fam_ver}.%{mpi_fam_ver}.%%{ARCH}.rpm
 %endif
 
 %if "%{set_tree}" == "error"
@@ -67,69 +69,50 @@ developed and maintained by a consortium of academic, research, and industry par
 %prep
 rm -rf $RPM_BUILD_ROOT/%{INSTALL_DIR}
 
-%setup -n %{name}-%{version}
+%setup -n Python-%{version}
  
 %build
 
 mkdir -p $RPM_BUILD_ROOT/%{INSTALL_DIR}
 mkdir -p %{INSTALL_DIR}
 
+##make sure the modules agree with the parameters
 module purge
 module load gcc/4.8.2
 
-./configure --prefix=%{INSTALL_DIR} --enable-mpirun-prefix-by-default --with-pmi=/opt/centos/apps/slurm/14.11.4
-make -j12 all 
-make install
- 
-cp -rp %{INSTALL_DIR}/ $RPM_BUILD_ROOT/%{INSTALL_DIR}/..
+./configure --prefix=%{INSTALL_DIR} --with-cxx-main=g++
+make
+make altinstall
+ln -s %{INSTALL_DIR}/bin/python2.7 %{INSTALL_DIR}/bin/python
 
 ##create modulefiles
 rm -rf $RPM_BUILD_ROOT/%{MODULE_DIR}
 mkdir -p $RPM_BUILD_ROOT/%{MODULE_DIR}
-
 cat > $RPM_BUILD_ROOT/%{MODULE_DIR}/%{version}.lua << 'EOF'
 
 help([[
-The openmpi modulefile defines the following environment variables
-HMS_OPENMPI_BIN, HMS_OPENMPI_LIB, and HMS_OPENMPI_INC for the location
-of the Openmpi distribution, documentation, binaries, libraries, and 
-include files, respectively.
-
-To use the openmpi library, include compilation directives
-of the form: -L$HMS_OPENMPI_LIB -I$HMS_OPENMPI_INC -lmpi
-
-Here is an example command to compile openmpi_test.c:
-gcc -I\$HMS_OPENMPI_INC openmpi_test.c -L\$HMS_OPENMPI_LIB -lmpi
+The python modulefile defines the following environment variables
+HMS_PYTHON_DIR for the location of the R distribution.
 
 Version %{version}
 ]])
 
-whatis("Name: OPENMPI")
+whatis("Name: python")
 whatis("Version: %{version}")
-whatis("Category: system/hpc/mpi")
-whatis("Keywords: MPI ")
-whatis("Description: The Open MPI Project is an open source Message Passing Interface implementation.")
-whatis("URL: http://www.open-mpi.org")
+whatis("Category: programming,scripting")
+whatis("Keywords: python,programming")
+whatis("Description: Python is a widely used general-purpose, high-level programming language.")
+whatis("URL: http://www.python.org/")
 
-setenv( "HMS_OPENMPI_DIR", "%{INSTALL_DIR}")
-setenv( "HMS_OPENMPI_BIN", "%{INSTALL_DIR}/bin")
-setenv( "HMS_OPENMPI_INC", "%{INSTALL_DIR}/include")
-setenv( "HMS_OPENMPI_LIB", "%{INSTALL_DIR}/lib")
+setenv( "HMS_PYTHON_DIR", "%{INSTALL_DIR}")
 
--- prepend path
+-- Append/prepend path
 prepend_path("PATH", "%{INSTALL_DIR}/bin")
-prepend_path("LD_LIBRARY_PATH","%{INSTALL_DIR}/lib")
-
---setup modulepath for this MPI stack ## only required for gcc, intel, openmpi, mpich, etc
-local mroot = os.getenv("MODULEPATH_ROOT")
-local mdir = pathJoin(mroot,"MPI", "%{comp_fam}", "%{comp_ver}","%{name}","%{version}")
-prepend_path("MODULEPATH", mdir)
-
 
 EOF
 
 %files 
-%defattr(-,rc200,rccg,-)
+%defattr(775,rc200,rccg,775)
 %{INSTALL_DIR}
 %{MODULE_DIR}
 

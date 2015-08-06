@@ -20,7 +20,7 @@ PLINK (one syllable) is being developed by Shaun Purcell at the Center for Human
 %define debug_package %{nil}
 
 %define comp_fam gcc
-%define comp_ver 4.4.7
+%define comp_ver 4.8.2
 %define mpi_fam openmpi
 %define mpi_ver 1.8.4
 
