@@ -116,7 +116,7 @@ whatis("Name: FFTW")
 whatis("Version: %{version}")
 whatis("Category: FFTW")
 whatis("Keywords: fftw, mpi")
-whatis("Description: fftw – is a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions,.")
+whatis("Description: a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions")
 whatis("URL: http://www.fftw.org")
 
 setenv( "HMS_FFTW_DIR", "%{INSTALL_DIR}")
