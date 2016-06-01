@@ -79,7 +79,7 @@ module load gcc/4.8.2
 module load openmpi/1.8.4
 module load openblas/0.2.13
 
-cmake .. -DCMAKE_C_COMPILER=mpicc -DCMAKE_CXX_COMPILER=mpicxx -DGMX_GPU=off -DGMX_BUILD_OWN_FFTW=ON -DGMX_MPI=on -DCMAKE_INSTALL_PREFIX=%{INSTALL_DIR} -DGMX_BLAS_USER=$HMS_OPENBLAS_LIB/libopenblas.a 
+cmake .. -DCMAKE_C_COMPILER=mpicc -DCMAKE_C_FLAGS="-fopenmp" -DCMAKE_CXX_COMPILER=mpicxx -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=/opt/apps/cuda/7.5/ -DGMX_BUILD_OWN_FFTW=ON -DGMX_MPI=on -DCMAKE_INSTALL_PREFIX=%{INSTALL_DIR} -DGMX_BLAS_USER=$HMS_OPENBLAS_LIB/libopenblas.a 
 make -j 8
 make install
 
