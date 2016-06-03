@@ -80,7 +80,7 @@ mkdir -p %{INSTALL_DIR}
 module purge
 module load gcc/4.8.2
 
-./configure --prefix=%{INSTALL_DIR} --with-cxx-main=g++
+./configure --prefix=%{INSTALL_DIR} --with-cxx-main=g++ --enable-shared
 make
 make altinstall
 ln -s %{INSTALL_DIR}/bin/python2.7 %{INSTALL_DIR}/bin/python
